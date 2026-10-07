@@ -1,0 +1,10 @@
+{
+  "name": "CodeFlow-Dashboard",
+  "version": "1.0.0",
+  "description": "Advanced learning analytics dashboard with a Node.js server and static frontend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  }
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeFlow Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar panel">
+        <div class="brand-wrap">
+          <div class="brand-mark">CF</div>
+          <div>
+            <div class="eyebrow">Learning OS</div>
+            <h1>CodeFlow</h1>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="themeToggle" class="ghost-button" type="button">Theme: Dark</button>
+        </div>
+      </header>
+
+      <main class="dashboard-layout">
+        <aside class="sidebar panel">
+          <nav class="nav-list">
+            <button class="nav-item active" type="button">Overview</button>
+            <button class="nav-item" type="button">Curriculum</button>
+            <button class="nav-item" type="button">Compiler</button>
+            <button class="nav-item" type="button">Achievements</button>
+            <button class="nav-item" type="button">Reports</button>
+          </nav>
+
+          <div class="mini-panel">
+            <div class="mini-label">XP</div>
+            <div id="xp-bar" class="xp-bar"></div>
+          </div>
+
+          <div class="mini-panel">
+            <div class="mini-label">Search</div>
+            <input id="search-index" class="search-input" type="text" placeholder="Find modules..." />
+            <div id="autocomplete" class="autocomplete-list"></div>
+          </div>
+        </aside>
+
+        <section class="content-column">
+          <div id="dashboard" class="panel section"></div>
+          <div id="badges" class="panel section"></div>
+          <div id="roadmap" class="panel section"></div>
+
+          <div class="two-column-grid">
+            <div id="cpu-compile" class="panel section"></div>
+            <div id="cpu-render" class="panel section"></div>
+          </div>
+
+          <div class="two-column-grid">
+            <div id="language" class="panel section"></div>
+            <div id="opcode-editor" class="panel section"></div>
+          </div>
+
+          <div class="two-column-grid">
+            <div id="quiz" class="panel section"></div>
+            <div id="glossary" class="panel section"></div>
+          </div>
+
+          <div id="events" class="panel section"></div>
+          <div id="heatmap" class="panel section"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

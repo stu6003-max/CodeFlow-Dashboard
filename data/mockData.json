@@ -1,0 +1,83 @@
+{
+  "dashboard": {
+    "title": "CodeFlow Command Center",
+    "subtitle": "AI-powered engineering academy",
+    "stats": [
+      { "label": "Active Missions", "value": "12", "delta": "+3 this week" },
+      { "label": "XP Earned", "value": "24.8k", "delta": "+1.2k today" },
+      { "label": "Streak", "value": "18 days", "delta": "best streak" },
+      { "label": "Accuracy", "value": "91%", "delta": "+8%" }
+    ],
+    "activity": [
+      { "label": "Data structures", "value": 84 },
+      { "label": "Algorithms", "value": 68 },
+      { "label": "System design", "value": 76 },
+      { "label": "Compiler logic", "value": 90 }
+    ]
+  },
+  "badges": [
+    { "name": "Compiler Wizard", "tier": "Legendary", "icon": "⚙️", "desc": "Completed 30 compile challenges" },
+    { "name": "Pipeline Hero", "tier": "Epic", "icon": "🚀", "desc": "Built 10 optimized execution paths" },
+    { "name": "Research Monk", "tier": "Rare", "icon": "🧠", "desc": "Solved 5 advanced reasoning tasks" },
+    { "name": "Debug Ranger", "tier": "Rare", "icon": "🔎", "desc": "Fixed 20 critical issues" }
+  ],
+  "roadmap": [
+    { "title": "Phase 1: Foundations", "status": "completed", "detail": "Variables, loops, recursion, I/O" },
+    { "title": "Phase 2: Memory & CPU", "status": "active", "detail": "Execution model, stack, heap" },
+    { "title": "Phase 3: Compilers", "status": "pending", "detail": "Tokenization and code generation" },
+    { "title": "Phase 4: Systems", "status": "pending", "detail": "Concurrency and memory safety" }
+  ],
+  "quiz": {
+    "question": "Which instruction best describes a pipeline stage that transforms tokens into executable operations?",
+    "choices": [
+      "Lexing",
+      "Scheduling",
+      "Rendering",
+      "Cache warming"
+    ],
+    "answer": "Lexing",
+    "explanation": "Lexing converts source text into recognizable tokens before parsing and code generation."
+  },
+  "language": {
+    "name": "Python",
+    "focus": "Algorithmic thinking",
+    "skills": ["Arrays", "Graphs", "Dynamic programming", "Concurrency"],
+    "progress": 82
+  },
+  "glossary": [
+    { "term": "AST", "definition": "Abstract syntax tree; a structured representation of source code." },
+    { "term": "JIT", "definition": "Just-in-time compilation for dynamic execution optimization." },
+    { "term": "Cache hit", "definition": "A memory access served from a cache instead of slower memory." },
+    { "term": "Thread", "definition": "A logical execution path inside a process." }
+  ],
+  "searchIndex": [
+    "Compiler pipeline",
+    "Badges system",
+    "Roadmap planning",
+    "Search indexing",
+    "XP progression",
+    "Heatmap analysis",
+    "Opcode editor",
+    "API performance"
+  ],
+  "autocomplete": [
+    "dashboard",
+    "badges",
+    "roadmap",
+    "compiler",
+    "experiments",
+    "heatmap",
+    "quiz",
+    "language"
+  ],
+  "heatmap": [
+    [1, 1, 0, 1, 0, 1, 1, 0],
+    [0, 1, 1, 1, 1, 0, 1, 0],
+    [1, 0, 1, 0, 1, 1, 1, 1],
+    [1, 1, 1, 1, 0, 1, 0, 0],
+    [0, 1, 0, 1, 1, 0, 1, 1],
+    [1, 0, 1, 1, 1, 1, 0, 1],
+    [0, 1, 1, 0, 1, 1, 1, 0],
+    [1, 1, 0, 1, 0, 1, 1, 1]
+  ]
+}
