@@ -1,14 +1,84 @@
+const FALLBACK_DATA = {
+  dashboard: {
+    title: 'CodeFlow Command Center',
+    subtitle: 'AI-powered engineering academy',
+    stats: [
+      { label: 'Active Missions', value: '12', delta: '+3 this week' },
+      { label: 'XP Earned', value: '24.8k', delta: '+1.2k today' },
+      { label: 'Streak', value: '18 days', delta: 'best streak' },
+      { label: 'Accuracy', value: '91%', delta: '+8%' }
+    ],
+    activity: [
+      { label: 'Data structures', value: 84 },
+      { label: 'Algorithms', value: 68 },
+      { label: 'System design', value: 76 },
+      { label: 'Compiler logic', value: 90 }
+    ]
+  },
+  badges: [
+    { name: 'Compiler Wizard', tier: 'Legendary', icon: '⚙️', desc: 'Completed 30 compile challenges' },
+    { name: 'Pipeline Hero', tier: 'Epic', icon: '🚀', desc: 'Built 10 optimized execution paths' },
+    { name: 'Research Monk', tier: 'Rare', icon: '🧠', desc: 'Solved 5 advanced reasoning tasks' },
+    { name: 'Debug Ranger', tier: 'Rare', icon: '🔎', desc: 'Fixed 20 critical issues' }
+  ],
+  roadmap: [
+    { title: 'Phase 1: Foundations', status: 'completed', detail: 'Variables, loops, recursion, I/O' },
+    { title: 'Phase 2: Memory & CPU', status: 'active', detail: 'Execution model, stack, heap' },
+    { title: 'Phase 3: Compilers', status: 'pending', detail: 'Tokenization and code generation' },
+    { title: 'Phase 4: Systems', status: 'pending', detail: 'Concurrency and memory safety' }
+  ],
+  quiz: {
+    question: 'Which instruction best describes a pipeline stage that transforms tokens into executable operations?',
+    choices: ['Lexing', 'Scheduling', 'Rendering', 'Cache warming'],
+    answer: 'Lexing',
+    explanation: 'Lexing converts source text into recognizable tokens before parsing and code generation.'
+  },
+  language: {
+    name: 'Python',
+    focus: 'Algorithmic thinking',
+    skills: ['Arrays', 'Graphs', 'Dynamic programming', 'Concurrency'],
+    progress: 82
+  },
+  glossary: [
+    { term: 'AST', definition: 'Abstract syntax tree; a structured representation of source code.' },
+    { term: 'JIT', definition: 'Just-in-time compilation for dynamic execution optimization.' },
+    { term: 'Cache hit', definition: 'A memory access served from a cache instead of slower memory.' },
+    { term: 'Thread', definition: 'A logical execution path inside a process.' }
+  ],
+  searchIndex: [
+    'Compiler pipeline',
+    'Badges system',
+    'Roadmap planning',
+    'Search indexing',
+    'XP progression',
+    'Heatmap analysis',
+    'Opcode editor',
+    'API performance'
+  ],
+  autocomplete: ['dashboard', 'badges', 'roadmap', 'compiler', 'experiments', 'heatmap', 'quiz', 'language'],
+  heatmap: [
+    [1, 1, 0, 1, 0, 1, 1, 0],
+    [0, 1, 1, 1, 1, 0, 1, 0],
+    [1, 0, 1, 0, 1, 1, 1, 1],
+    [1, 1, 1, 1, 0, 1, 0, 0],
+    [0, 1, 0, 1, 1, 0, 1, 1],
+    [1, 0, 1, 1, 1, 1, 0, 1],
+    [0, 1, 1, 0, 1, 1, 1, 0],
+    [1, 1, 0, 1, 0, 1, 1, 1]
+  ]
+};
+
 const state = {
   theme: 'dark',
-  dashboard: null,
-  badges: [],
-  roadmap: [],
-  glossary: [],
-  quiz: null,
-  language: null,
-  autocomplete: [],
-  searchIndex: [],
-  heatmap: []
+  dashboard: FALLBACK_DATA.dashboard,
+  badges: FALLBACK_DATA.badges,
+  roadmap: FALLBACK_DATA.roadmap,
+  glossary: FALLBACK_DATA.glossary,
+  quiz: FALLBACK_DATA.quiz,
+  language: FALLBACK_DATA.language,
+  autocomplete: FALLBACK_DATA.autocomplete,
+  searchIndex: FALLBACK_DATA.searchIndex,
+  heatmap: FALLBACK_DATA.heatmap
 };
 
 function safeInit(elementId, callback) {
@@ -30,7 +100,11 @@ function safeInit(elementId, callback) {
 async function fetchJson(url, options = {}) {
   const response = await fetch(url, {
     headers: { 'Content-Type': 'application/json' },
-    ...options
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      'Content-Type': 'application/json'
+    }
   });
 
   if (!response.ok) {
@@ -142,9 +216,9 @@ function renderRoadmap(element) {
 }
 
 async function compileProgram(name) {
+  const panel = document.getElementById('cpu-compile');
   try {
-    const result = await fetchJson(`/api/compile?name=${encodeURIComponent(name)}`);
-    const panel = document.getElementById('cpu-compile');
+    const result = await fetchJson(`/api/compile?name=${encodeURIComponent(name || 'sum')}`);
 
     if (panel) {
       panel.innerHTML = `
@@ -153,13 +227,19 @@ async function compileProgram(name) {
           <strong>Program: ${result.program}</strong>
           <span class="language-pill">${result.status}</span>
         </div>
-        <div class="compile-output">${result.output.join('\n')}</div>
+        <div class="compile-output">${String(result.output || []).join('\n')}</div>
         <div>${result.log}</div>
-        <button class="small-button" type="button">+${result.xp} XP</button>
+        <button class="small-button" type="button">+${result.xp || 0} XP</button>
       `;
     }
   } catch (error) {
     console.error('Compilation failed:', error);
+    if (panel) {
+      panel.innerHTML = `
+        <div class="section-title">CPU Compile</div>
+        <div class="compile-output">Compilation fallback active\nUsing local emulation mode.</div>
+      `;
+    }
   }
 }
 
@@ -290,8 +370,11 @@ function bindAutocomplete() {
   const list = document.getElementById('autocomplete');
   const items = state.autocomplete || [];
 
+  if (!input || !list) return;
+
   const renderSuggestions = (term) => {
-    const filtered = items.filter((item) => item.toLowerCase().includes(term.toLowerCase()));
+    const normalized = (term || '').trim();
+    const filtered = items.filter((item) => item.toLowerCase().includes(normalized.toLowerCase()));
     list.innerHTML = filtered
       .slice(0, 6)
       .map((item) => `<button class="autocomplete-item" type="button">${item}</button>`)
@@ -318,6 +401,7 @@ function bindEvents() {
         try {
           const result = await fetchJson(`/api/search?q=${encodeURIComponent(q)}`);
           const list = document.getElementById('autocomplete');
+          if (!list) return;
           list.innerHTML = result.items
             .map((item) => `<button class="autocomplete-item" type="button">${item}</button>`)
             .join('');
@@ -377,15 +461,15 @@ function initPipelineAnimation() {
 async function bootstrap() {
   try {
     const data = await fetchJson('/api/dashboard');
-    state.dashboard = data.dashboard;
-    state.badges = data.badges;
-    state.roadmap = data.roadmap;
-    state.quiz = data.quiz;
-    state.language = data.language;
-    state.glossary = data.glossary;
-    state.autocomplete = data.autocomplete;
-    state.searchIndex = data.searchIndex;
-    state.heatmap = data.heatmap;
+    state.dashboard = data.dashboard || FALLBACK_DATA.dashboard;
+    state.badges = data.badges || FALLBACK_DATA.badges;
+    state.roadmap = data.roadmap || FALLBACK_DATA.roadmap;
+    state.quiz = data.quiz || FALLBACK_DATA.quiz;
+    state.language = data.language || FALLBACK_DATA.language;
+    state.glossary = data.glossary || FALLBACK_DATA.glossary;
+    state.autocomplete = data.autocomplete || FALLBACK_DATA.autocomplete;
+    state.searchIndex = data.searchIndex || FALLBACK_DATA.searchIndex;
+    state.heatmap = data.heatmap || FALLBACK_DATA.heatmap;
   } catch (error) {
     console.warn('Falling back to in-memory mock data:', error);
   }
@@ -393,7 +477,7 @@ async function bootstrap() {
   safeInit('dashboard', renderDashboard);
   safeInit('badges', renderBadges);
   safeInit('roadmap', renderRoadmap);
-  safeInit('cpu-compile', compileProgram.bind(null, 'sum'));
+  safeInit('cpu-compile', () => compileProgram('sum'));
   safeInit('cpu-render', renderCpu);
   safeInit('language', renderLanguage);
   safeInit('quiz', renderQuiz);
@@ -418,7 +502,8 @@ async function bootstrap() {
       applyTheme(nextTheme);
       fetchJson('/api/theme', {
         method: 'POST',
-        body: JSON.stringify({ theme: nextTheme })
+        body: JSON.stringify({ theme: nextTheme }),
+        headers: { 'Content-Type': 'application/json' }
       }).catch(() => console.warn('Theme sync failed'));
     });
   }
