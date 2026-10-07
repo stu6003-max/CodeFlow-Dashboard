@@ -1,512 +1,611 @@
-const FALLBACK_DATA = {
-  dashboard: {
-    title: 'CodeFlow Command Center',
-    subtitle: 'AI-powered engineering academy',
-    stats: [
-      { label: 'Active Missions', value: '12', delta: '+3 this week' },
-      { label: 'XP Earned', value: '24.8k', delta: '+1.2k today' },
-      { label: 'Streak', value: '18 days', delta: 'best streak' },
-      { label: 'Accuracy', value: '91%', delta: '+8%' }
-    ],
-    activity: [
-      { label: 'Data structures', value: 84 },
-      { label: 'Algorithms', value: 68 },
-      { label: 'System design', value: 76 },
-      { label: 'Compiler logic', value: 90 }
-    ]
-  },
-  badges: [
-    { name: 'Compiler Wizard', tier: 'Legendary', icon: '⚙️', desc: 'Completed 30 compile challenges' },
-    { name: 'Pipeline Hero', tier: 'Epic', icon: '🚀', desc: 'Built 10 optimized execution paths' },
-    { name: 'Research Monk', tier: 'Rare', icon: '🧠', desc: 'Solved 5 advanced reasoning tasks' },
-    { name: 'Debug Ranger', tier: 'Rare', icon: '🔎', desc: 'Fixed 20 critical issues' }
-  ],
-  roadmap: [
-    { title: 'Phase 1: Foundations', status: 'completed', detail: 'Variables, loops, recursion, I/O' },
-    { title: 'Phase 2: Memory & CPU', status: 'active', detail: 'Execution model, stack, heap' },
-    { title: 'Phase 3: Compilers', status: 'pending', detail: 'Tokenization and code generation' },
-    { title: 'Phase 4: Systems', status: 'pending', detail: 'Concurrency and memory safety' }
-  ],
-  quiz: {
-    question: 'Which instruction best describes a pipeline stage that transforms tokens into executable operations?',
-    choices: ['Lexing', 'Scheduling', 'Rendering', 'Cache warming'],
-    answer: 'Lexing',
-    explanation: 'Lexing converts source text into recognizable tokens before parsing and code generation.'
-  },
-  language: {
-    name: 'Python',
-    focus: 'Algorithmic thinking',
-    skills: ['Arrays', 'Graphs', 'Dynamic programming', 'Concurrency'],
-    progress: 82
-  },
-  glossary: [
-    { term: 'AST', definition: 'Abstract syntax tree; a structured representation of source code.' },
-    { term: 'JIT', definition: 'Just-in-time compilation for dynamic execution optimization.' },
-    { term: 'Cache hit', definition: 'A memory access served from a cache instead of slower memory.' },
-    { term: 'Thread', definition: 'A logical execution path inside a process.' }
-  ],
-  searchIndex: [
-    'Compiler pipeline',
-    'Badges system',
-    'Roadmap planning',
-    'Search indexing',
-    'XP progression',
-    'Heatmap analysis',
-    'Opcode editor',
-    'API performance'
-  ],
-  autocomplete: ['dashboard', 'badges', 'roadmap', 'compiler', 'experiments', 'heatmap', 'quiz', 'language'],
-  heatmap: [
-    [1, 1, 0, 1, 0, 1, 1, 0],
-    [0, 1, 1, 1, 1, 0, 1, 0],
-    [1, 0, 1, 0, 1, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 0, 0],
-    [0, 1, 0, 1, 1, 0, 1, 1],
-    [1, 0, 1, 1, 1, 1, 0, 1],
-    [0, 1, 1, 0, 1, 1, 1, 0],
-    [1, 1, 0, 1, 0, 1, 1, 1]
-  ]
-};
+* {
+  box-sizing: border-box;
+}
 
-const state = {
-  theme: 'dark',
-  dashboard: FALLBACK_DATA.dashboard,
-  badges: FALLBACK_DATA.badges,
-  roadmap: FALLBACK_DATA.roadmap,
-  glossary: FALLBACK_DATA.glossary,
-  quiz: FALLBACK_DATA.quiz,
-  language: FALLBACK_DATA.language,
-  autocomplete: FALLBACK_DATA.autocomplete,
-  searchIndex: FALLBACK_DATA.searchIndex,
-  heatmap: FALLBACK_DATA.heatmap
-};
+:root {
+  --bg: #080d18;
+  --bg-strong: #101a2b;
+  --panel: rgba(17, 27, 40, 0.92);
+  --panel-alt: rgba(13, 21, 31, 0.96);
+  --line: rgba(148, 163, 184, 0.18);
+  --text: #e6edf7;
+  --muted: #8ea3bf;
+  --accent: #7c9cff;
+  --accent-2: #54d3ff;
+  --success: #3ddc97;
+  --warning: #ffbf69;
+  --danger: #ff5f7a;
+  --shadow: rgba(0, 0, 0, 0.35);
+}
 
-function safeInit(elementId, callback) {
-  const element = document.getElementById(elementId);
-  if (!element) {
-    console.warn(`Element not found: ${elementId}`);
-    return false;
+[data-theme='light'] {
+  --bg: #edf4ff;
+  --bg-strong: #dfeaff;
+  --panel: rgba(255, 255, 255, 0.9);
+  --panel-alt: rgba(243, 247, 255, 0.95);
+  --line: rgba(109, 128, 158, 0.18);
+  --text: #101827;
+  --muted: #53647c;
+  --accent: #345cf7;
+  --accent-2: #1296d9;
+  --success: #1db36a;
+  --warning: #f59e0b;
+  --danger: #ef476f;
+  --shadow: rgba(53, 77, 125, 0.12);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, rgba(124, 156, 255, 0.18), transparent 30%), linear-gradient(135deg, var(--bg), var(--bg-strong));
+  color: var(--text);
+  font-family: Inter, 'Segoe UI', sans-serif;
+}
+
+body {
+  padding: 24px;
+}
+
+button, input, textarea {
+  font: inherit;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.auth-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.auth-card {
+  width: min(460px, 90vw);
+  padding: 28px 24px;
+}
+
+.auth-title {
+  margin: 18px 0 20px;
+  font-size: 1.5rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.auth-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text);
+}
+
+.auth-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.primary-button,
+.secondary-button,
+.ghost-button,
+.small-button,
+.quiz-option,
+.autocomplete-item {
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.primary-button,
+.secondary-button,
+.small-button {
+  border: none;
+  padding: 10px 16px;
+  font-weight: 600;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white;
+}
+
+.secondary-button {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.ghost-button {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 12px;
+}
+
+.ghost-button.danger {
+  border-color: rgba(255,95,122,0.4);
+  color: var(--danger);
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.ghost-button:hover,
+.small-button:hover,
+.quiz-option:hover,
+.autocomplete-item:hover {
+  transform: translateY(-1px);
+}
+
+.auth-status {
+  min-height: 22px;
+  margin-top: 14px;
+  color: var(--warning);
+}
+
+.app-shell {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  margin-bottom: 20px;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white;
+  font-weight: 800;
+  box-shadow: 0 12px 24px rgba(124, 156, 255, 0.45);
+}
+
+.eyebrow {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+}
+
+.sidebar {
+  padding: 18px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.nav-item {
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: linear-gradient(135deg, rgba(124, 156, 255, 0.18), rgba(84, 211, 255, 0.08));
+  border-color: rgba(124, 156, 255, 0.5);
+}
+
+.mini-panel {
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+}
+
+.mini-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.xp-bar {
+  width: 100%;
+  height: 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.xp-fill {
+  height: 100%;
+  width: 78%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.search-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+}
+
+.autocomplete-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.autocomplete-item {
+  padding: 6px 10px;
+  background: rgba(124, 156, 255, 0.12);
+  border: 1px solid rgba(124, 156, 255, 0.28);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.content-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section {
+  padding: 18px 20px;
+}
+
+.section-title {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+}
+
+.muted-text {
+  color: var(--muted);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 14px;
+}
+
+.stat-card {
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.stat-value {
+  margin-top: 12px;
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  font-weight: 700;
+}
+
+.stat-delta {
+  margin-top: 8px;
+  color: var(--success);
+  font-size: 12px;
+}
+
+.activity-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.activity-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-track {
+  position: relative;
+  height: 10px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+}
+
+.badge-grid,
+.roadmap-list,
+.glossary-list,
+.quiz-options {
+  display: grid;
+  gap: 14px;
+}
+
+.badge-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.badge-card {
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.badge-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.badge-icon {
+  font-size: 1.8rem;
+}
+
+.badge-tier {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warning);
+}
+
+.roadmap-list {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.roadmap-step {
+  padding: 16px;
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.roadmap-step::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--accent);
+  opacity: 0.7;
+}
+
+.roadmap-step.completed {
+  border-color: rgba(61, 220, 151, 0.5);
+}
+
+.roadmap-step.active {
+  border-color: rgba(124, 156, 255, 0.6);
+  box-shadow: 0 0 0 1px rgba(124, 156, 255, 0.2);
+}
+
+.roadmap-step.pending {
+  opacity: 0.75;
+}
+
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(60px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.pipeline-step {
+  height: 14px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+.pipeline-step.active {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 18px rgba(124, 156, 255, 0.6);
+}
+
+.two-column-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.compile-output {
+  margin-top: 14px;
+  background: rgba(13,21,31,0.9);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  white-space: pre-wrap;
+  color: var(--success);
+}
+
+.small-button {
+  padding: 10px 12px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white;
+  border: none;
+}
+
+.language-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.language-pill {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(84, 211, 255, 0.08);
+  border: 1px solid rgba(84, 211, 255, 0.2);
+  color: var(--accent-2);
+  font-size: 12px;
+}
+
+.inline-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.inline-pill {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.editor-box {
+  width: 100%;
+  min-height: 160px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(6, 10, 18, 0.8);
+  color: var(--text);
+  padding: 12px;
+  resize: vertical;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}
+
+.quiz-option {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--line);
+  color: var(--text);
+  text-align: left;
+}
+
+.glossary-item {
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.glossary-item h4 {
+  margin: 0 0 8px;
+}
+
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.02);
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(26px, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.heat-cell {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background: rgba(124, 156, 255, 0.15);
+}
+
+.heat-cell.active {
+  background: linear-gradient(135deg, var(--accent), var(--success));
+}
+
+@media (max-width: 980px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
   }
 
-  try {
-    callback(element);
-    return true;
-  } catch (error) {
-    console.error(`Failed to initialize ${elementId}:`, error);
-    return false;
+  .two-column-grid,
+  .stat-grid {
+    grid-template-columns: 1fr;
   }
 }
-
-async function fetchJson(url, options = {}) {
-  const response = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
-  }
-
-  return response.json();
-}
-
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  state.theme = theme;
-  const toggle = document.getElementById('themeToggle');
-  if (toggle) {
-    toggle.textContent = `Theme: ${theme === 'dark' ? 'Dark' : 'Light'}`;
-  }
-
-  try {
-    localStorage.setItem('cfTheme', theme);
-  } catch (error) {
-    console.warn('Theme could not be saved:', error);
-  }
-}
-
-function renderDashboard(element) {
-  const data = state.dashboard;
-  if (!data) return;
-
-  const statsMarkup = data.stats
-    .map(
-      (stat) => `
-        <div class="stat-card">
-          <div class="stat-label">${stat.label}</div>
-          <div class="stat-value">${stat.value}</div>
-          <div class="stat-delta">${stat.delta}</div>
-        </div>
-      `
-    )
-    .join('');
-
-  const activityMarkup = data.activity
-    .map(
-      (item) => `
-        <div class="activity-item">
-          <div>${item.label}</div>
-          <div class="progress-track">
-            <span class="progress-fill" style="width: ${item.value}%"></span>
-          </div>
-        </div>
-      `
-    )
-    .join('');
-
-  element.innerHTML = `
-    <div class="section-title">${data.title}</div>
-    <div class="muted-text">${data.subtitle}</div>
-    <div class="stat-grid" style="margin-top: 16px;">${statsMarkup}</div>
-    <div class="activity-list">${activityMarkup}</div>
-  `;
-}
-
-function renderBadges(element) {
-  const items = state.badges || [];
-  const markup = items
-    .map(
-      (badge) => `
-        <div class="badge-card">
-          <div class="badge-top">
-            <div class="badge-icon">${badge.icon}</div>
-            <div class="badge-tier">${badge.tier}</div>
-          </div>
-          <h3>${badge.name}</h3>
-          <div>${badge.desc}</div>
-        </div>
-      `
-    )
-    .join('');
-
-  element.innerHTML = `
-    <div class="section-title">Achievements</div>
-    <div class="badge-grid">${markup}</div>
-  `;
-}
-
-function renderRoadmap(element) {
-  const items = state.roadmap || [];
-  const markup = items
-    .map(
-      (step) => `
-        <div class="roadmap-step ${step.status}">
-          <h3>${step.title}</h3>
-          <div>${step.detail}</div>
-        </div>
-      `
-    )
-    .join('');
-
-  element.innerHTML = `
-    <div class="section-title">Roadmap</div>
-    <div class="pipeline">
-      <div class="pipeline-step active"></div>
-      <div class="pipeline-step"></div>
-      <div class="pipeline-step"></div>
-      <div class="pipeline-step"></div>
-      <div class="pipeline-step"></div>
-    </div>
-    <div class="roadmap-list" style="margin-top: 18px;">${markup}</div>
-  `;
-}
-
-async function compileProgram(name) {
-  const panel = document.getElementById('cpu-compile');
-  try {
-    const result = await fetchJson(`/api/compile?name=${encodeURIComponent(name || 'sum')}`);
-
-    if (panel) {
-      panel.innerHTML = `
-        <div class="section-title">CPU Compile</div>
-        <div class="language-card">
-          <strong>Program: ${result.program}</strong>
-          <span class="language-pill">${result.status}</span>
-        </div>
-        <div class="compile-output">${String(result.output || []).join('\n')}</div>
-        <div>${result.log}</div>
-        <button class="small-button" type="button">+${result.xp || 0} XP</button>
-      `;
-    }
-  } catch (error) {
-    console.error('Compilation failed:', error);
-    if (panel) {
-      panel.innerHTML = `
-        <div class="section-title">CPU Compile</div>
-        <div class="compile-output">Compilation fallback active\nUsing local emulation mode.</div>
-      `;
-    }
-  }
-}
-
-function renderCpu(element) {
-  element.innerHTML = `
-    <div class="section-title">CPU Pipeline</div>
-    <div class="pipeline">
-      <div class="pipeline-step active"></div>
-      <div class="pipeline-step"></div>
-      <div class="pipeline-step"></div>
-      <div class="pipeline-step"></div>
-      <div class="pipeline-step"></div>
-    </div>
-    <button class="small-button" id="compileBtn" type="button">Compile sum</button>
-  `;
-
-  const compileBtn = document.getElementById('compileBtn');
-  if (compileBtn) {
-    compileBtn.addEventListener('click', () => compileProgram('sum'));
-  }
-}
-
-function renderLanguage(element) {
-  const language = state.language || { name: 'Python', focus: 'Algorithms', skills: [], progress: 80 };
-  element.innerHTML = `
-    <div class="section-title">Active Language</div>
-    <div class="language-card">
-      <div>
-        <div style="font-size: 1.2rem; font-weight: 700;">${language.name}</div>
-        <div style="color: var(--muted); margin-top: 4px;">${language.focus}</div>
-      </div>
-      <span class="language-pill">${language.progress}%</span>
-    </div>
-    <div class="progress-track" style="margin-top: 14px;">
-      <span class="progress-fill" style="width: ${language.progress}%"></span>
-    </div>
-    <div class="inline-list">
-      ${(language.skills || []).map((skill) => `<span class="inline-pill">${skill}</span>`).join('')}
-    </div>
-  `;
-}
-
-function renderQuiz(element) {
-  const quiz = state.quiz;
-  if (!quiz) return;
-
-  const options = quiz.choices
-    .map(
-      (choice) => `<button class="quiz-option" data-choice="${choice}" type="button">${choice}</button>`
-    )
-    .join('');
-
-  element.innerHTML = `
-    <div class="section-title">Quiz</div>
-    <div>${quiz.question}</div>
-    <div class="quiz-options">${options}</div>
-    <div id="quizResult" style="margin-top: 12px; color: var(--muted);"></div>
-  `;
-
-  element.querySelectorAll('.quiz-option').forEach((button) => {
-    button.addEventListener('click', async () => {
-      try {
-        const payload = await fetchJson('/api/quiz/submit', {
-          method: 'POST',
-          body: JSON.stringify({ answer: button.dataset.choice })
-        });
-
-        const resultBox = document.getElementById('quizResult');
-        if (resultBox) {
-          resultBox.textContent = payload.correct ? `${payload.message} ${payload.rewardXp} XP` : `${payload.message} ${payload.explanation}`;
-          resultBox.style.color = payload.correct ? 'var(--success)' : 'var(--warning)';
-        }
-      } catch (error) {
-        console.error('Quiz submit failed:', error);
-      }
-    });
-  });
-}
-
-function renderGlossary(element) {
-  const list = state.glossary || [];
-  const markup = list
-    .map(
-      (item) => `
-        <div class="glossary-item">
-          <h4>${item.term}</h4>
-          <div>${item.definition}</div>
-        </div>
-      `
-    )
-    .join('');
-
-  element.innerHTML = `
-    <div class="section-title">Glossary</div>
-    <div class="glossary-list">${markup}</div>
-  `;
-}
-
-function renderOpcodeEditor(element) {
-  element.innerHTML = `
-    <div class="section-title">Opcode Editor</div>
-    <textarea class="editor-box" spellcheck="false">LOAD R1, #12
-ADD R1, R1, #8
-STORE [MEM], R1
-JMP 0x02</textarea>
-  `;
-}
-
-function renderXPBar(element) {
-  element.innerHTML = '<div class="xp-fill"></div>';
-}
-
-function renderHeatmap(element) {
-  const values = state.heatmap || [];
-  const cells = values
-    .flat()
-    .map((value) => `<div class="heat-cell ${value ? 'active' : ''}"></div>`)
-    .join('');
-
-  element.innerHTML = `
-    <div class="section-title">Activity Heatmap</div>
-    <div class="heatmap-grid">${cells}</div>
-  `;
-}
-
-function bindAutocomplete() {
-  const input = document.getElementById('search-index');
-  const list = document.getElementById('autocomplete');
-  const items = state.autocomplete || [];
-
-  if (!input || !list) return;
-
-  const renderSuggestions = (term) => {
-    const normalized = (term || '').trim();
-    const filtered = items.filter((item) => item.toLowerCase().includes(normalized.toLowerCase()));
-    list.innerHTML = filtered
-      .slice(0, 6)
-      .map((item) => `<button class="autocomplete-item" type="button">${item}</button>`)
-      .join('');
-
-    list.querySelectorAll('.autocomplete-item').forEach((button) => {
-      button.addEventListener('click', () => {
-        input.value = button.textContent.trim();
-        list.innerHTML = '';
-      });
-    });
-  };
-
-  input.addEventListener('input', (event) => renderSuggestions(event.target.value));
-}
-
-function bindEvents() {
-  const input = document.getElementById('search-index');
-  if (input) {
-    input.addEventListener('keydown', async (event) => {
-      if (event.key === 'Enter') {
-        const q = input.value.trim();
-        if (!q) return;
-        try {
-          const result = await fetchJson(`/api/search?q=${encodeURIComponent(q)}`);
-          const list = document.getElementById('autocomplete');
-          if (!list) return;
-          list.innerHTML = result.items
-            .map((item) => `<button class="autocomplete-item" type="button">${item}</button>`)
-            .join('');
-        } catch (error) {
-          console.error('Search failed:', error);
-        }
-      }
-    });
-  }
-}
-
-function buildSearchIndex() {
-  const input = document.getElementById('search-index');
-  if (input) {
-    input.value = 'compiler';
-  }
-}
-
-function renderEvents(element) {
-  const events = [
-    { time: '09:42', text: 'Compiler optimization pass complete' },
-    { time: '10:18', text: 'XP boost unlocked: pipeline mastery' },
-    { time: '11:06', text: 'Roadmap milestone reached' },
-    { time: '12:20', text: 'Quiz accuracy improved by 7%' }
-  ];
-
-  const markup = events
-    .map(
-      (event) => `
-        <div class="event-item">
-          <strong>${event.time}</strong>
-          <span>${event.text}</span>
-        </div>
-      `
-    )
-    .join('');
-
-  element.innerHTML = `
-    <div class="section-title">Recent Events</div>
-    <div class="event-list">${markup}</div>
-  `;
-}
-
-function initPipelineAnimation() {
-  const steps = document.querySelectorAll('.pipeline-step');
-  if (!steps.length) return;
-
-  let activeIndex = 0;
-  setInterval(() => {
-    steps.forEach((step, index) => {
-      step.classList.toggle('active', index === activeIndex);
-    });
-    activeIndex = (activeIndex + 1) % steps.length;
-  }, 1300);
-}
-
-async function bootstrap() {
-  try {
-    const data = await fetchJson('/api/dashboard');
-    state.dashboard = data.dashboard || FALLBACK_DATA.dashboard;
-    state.badges = data.badges || FALLBACK_DATA.badges;
-    state.roadmap = data.roadmap || FALLBACK_DATA.roadmap;
-    state.quiz = data.quiz || FALLBACK_DATA.quiz;
-    state.language = data.language || FALLBACK_DATA.language;
-    state.glossary = data.glossary || FALLBACK_DATA.glossary;
-    state.autocomplete = data.autocomplete || FALLBACK_DATA.autocomplete;
-    state.searchIndex = data.searchIndex || FALLBACK_DATA.searchIndex;
-    state.heatmap = data.heatmap || FALLBACK_DATA.heatmap;
-  } catch (error) {
-    console.warn('Falling back to in-memory mock data:', error);
-  }
-
-  safeInit('dashboard', renderDashboard);
-  safeInit('badges', renderBadges);
-  safeInit('roadmap', renderRoadmap);
-  safeInit('cpu-compile', () => compileProgram('sum'));
-  safeInit('cpu-render', renderCpu);
-  safeInit('language', renderLanguage);
-  safeInit('quiz', renderQuiz);
-  safeInit('glossary', renderGlossary);
-  safeInit('opcode-editor', renderOpcodeEditor);
-  safeInit('xp-bar', renderXPBar);
-  safeInit('heatmap', renderHeatmap);
-  safeInit('events', renderEvents);
-
-  bindAutocomplete();
-  bindEvents();
-  buildSearchIndex();
-  initPipelineAnimation();
-
-  const savedTheme = localStorage.getItem('cfTheme') || 'dark';
-  applyTheme(savedTheme);
-
-  const themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const nextTheme = state.theme === 'dark' ? 'light' : 'dark';
-      applyTheme(nextTheme);
-      fetchJson('/api/theme', {
-        method: 'POST',
-        body: JSON.stringify({ theme: nextTheme }),
-        headers: { 'Content-Type': 'application/json' }
-      }).catch(() => console.warn('Theme sync failed'));
-    });
-  }
-}
-
-window.addEventListener('DOMContentLoaded', bootstrap);
